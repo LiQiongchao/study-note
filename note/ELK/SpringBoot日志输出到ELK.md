@@ -4,8 +4,6 @@
 
 ### 下载镜像
 
-下载方式有两种，一种是手动下载，启动后，进入到容器中ES下载分词器，Logstash下载Json解析工具。二就是使用Dockerfile在原有镜像的基础上打包成一个新镜像，直接启动容器即可，无需再进入容器下载分词器，Json解析等工具。
-
 #### 手动下载ELK镜像
 
 ```shell
@@ -13,10 +11,6 @@ docker pull elasticsearch:6.4.0
 docker pull logstash:6.4.0
 docker pull kibana:6.4.0
 ```
-
-#### 使用Dockfile下载打包镜像
-
-
 
 ### docker-compose
 
@@ -45,6 +39,7 @@ version: '3'
 services:
   elasticsearch:
 	image: elasticsearch:6.4.0
+	# build: ./docker-images/es-ik-pinyin-6.4.0/
 	container_name: elasticsearch
 	environment:
 	  - "cluster.name=elasticsearch" #设置集群名称为elasticsearch
@@ -152,7 +147,7 @@ docker restart elasticsearch
 # 进入logstash容器
 docker exec -it logstash /bin/bash
 # 进入bin目录
-cd /bin/
+cd bin/
 # 安装插件
 logstash-plugin install logstash-codec-json_lines
 # 退出容器
