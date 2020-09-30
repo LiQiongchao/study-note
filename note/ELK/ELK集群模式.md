@@ -1,6 +1,10 @@
 # 自定义ES，Logstash镜像
 
-下载方式有两种，一种是手动下载，启动后，进入到容器中ES下载分词器，Logstash下载Json解析工具。二就是使用Dockerfile在原有镜像的基础上打包成一个新镜像，直接启动容器即可，无需再进入容器下载分词器，Json解析等工具。
+下载方式有两种，
+
+一种是手动下载，启动后，再进入到容器中ES下载分词器，Logstash下载Json解析工具。
+
+二就是使用Dockerfile在原有镜像的基础上打包成一个新镜像，直接启动容器即可，无需再进入容器下载分词器，Json解析等工具。
 
 ## 使用Dockfile下载打包镜像
 
@@ -25,7 +29,7 @@ RUN sh -c '/bin/echo -e "y" | ./bin/logstash-plugin install logstash-codec-json_
 
 可以先使用 `docker build -t myName:1.0.0 .` 来打包镜像，也可以使用 docker-compose 直接打包启动。
 
-### docker-compose.yml
+### 使用 docker-compose 打包
 
 关于使用 docker-compose 打包镜像可以参考下面配置。
 
@@ -57,42 +61,156 @@ services:
 
 
 
+# 配置文件
+
+配置文件主要是 docker-compose, logstahsh, kibana的配置文件。es的配置文件是通过 compose 的 environment 配置给覆盖的。
+
+## docker-compose.yml
+
+```yaml
+version: '3' 
+ 
+services: 
+  es01: 
+        image: oio-es:1.0.0 
+        container_name: es01 
+        environment: 
+          - "cluster.name=oio-elasticsearch" #设置集群名称为elasticsearch 
+          - "node.master=true" 
+          - "node.data=false" 
+          - "discovery.zen.ping.unicast.hosts=es02, es03" 
+          - "ES_JAVA_OPTS=-Xms512m -Xmx512m" #设置使用jvm内存大小 
+        volumes: 
+          - /data/server-apps/oio-elasticsearch/data01:/usr/share/elasticsearch/data #数据文件挂载 
+        ports: 
+          - 9201:9200 
+          - 9301:9300 
+  es02: 
+        image: oio-es:1.0.0 
+        container_name: es02 
+        environment: 
+          - "cluster.name=oio-elasticsearch" #设置集群名称为elasticsearch 
+          - "discovery.zen.ping.unicast.hosts=es01, es03" 
+          - "ES_JAVA_OPTS=-Xms512m -Xmx512m" #设置使用jvm内存大小 
+        volumes: 
+          - /data/server-apps/oio-elasticsearch/data02:/usr/share/elasticsearch/data #数据文件挂载 
+        ports: 
+          - 9202:9200 
+          - 9302:9300 
+  es03: 
+        image: oio-es:1.0.0 
+        container_name: es03 
+        environment: 
+          - "cluster.name=oio-elasticsearch" #设置集群名称为elasticsearch 
+          - "discovery.zen.ping.unicast.hosts=es01, es02" 
+          - "ES_JAVA_OPTS=-Xms512m -Xmx512m" #设置使用jvm内存大小 
+        volumes: 
+          - /data/server-apps/oio-elasticsearch/data03:/usr/share/elasticsearch/data #数据文件挂载 
+        ports: 
+          - 9203:9200 
+          - 9303:9300 
+           
+  kibana: 
+        image: kibana:6.4.0 
+        container_name: kibana 
+        # links: 
+          # - es01:es #可以用es这个域名访问elasticsearch服务 
+        depends_on: 
+          - es01 #kibana在elasticsearch启动之后再启动 
+          - es02 
+          - es03 
+        #environment:
+	  	  #- "elasticsearch.url=http://es:9201" #设置访问elasticsearch的地址，这种方式无法覆盖容器内的配置，在本版本中只能使用覆盖配置文件的方式
+        volumes: 
+          - /data/server-apps/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:rw 
+        ports: 
+          - 5601:5601 
+ 
+  logstash: 
+    image: oio-logstash:1.0.0 
+    container_name: logstash 
+    volumes: 
+      - /data/server-apps/logstash/logstash-springboot.conf:/usr/share/logstash/pipeline/logstash.conf #挂载logstash的配置文件 
+    depends_on: 
+      - es01 #logstash在elasticsearch启动之后再启动 
+      - es02 
+      - es03 
+    ports: 
+      - 4560:4560
+```
 
 
 
+## logstash配置文件
+
+logstash-springboot.conf
+
+```json
+input {
+  tcp {
+    mode => "server"
+    host => "0.0.0.0"
+    port => 4560
+    codec => json_lines
+  }
+}
+output {
+  elasticsearch {
+    hosts => ["es01:9200", "es02:9200", "es03:9200"]
+    index => "springboot-logstash-%{+YYYY.MM.dd}"
+  }
+}
+```
+
+> input 是配置对外信息
+>
+> output 的 hosts 配置的是各个es的服务器。
 
 
 
+## kibana配置文件
+
+kibana.yml
+
+```yaml
+server.name: kibana
+server.host: "0"
+elasticsearch.url: http://es01:9200
+xpack.monitoring.ui.container.elasticsearch.enabled: false
+```
+
+> 本来是不打算配置 kibana 的配置文件的，想着使用 compose 的 environment 把 `elasticsearch.url` 给覆盖掉，后来发现无法覆盖。所以又增加了个 kibana 的配置文件。
 
 
 
+# 启动
+
+使用 docker-compose 的命令启动
+
+```shell
+docker-compose -f docker-compose.yml up -d
+```
+
+> -f : 是指定 compose 的配置文件名，如果是 docker-compose.yml 和 docker-compose.yaml，可以不指定。
+>
+> up : 表示启动
+>
+> -d : 表示后台启动，否则就以当前窗口启动。
 
 
 
+# kibana 配置
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+参考[SpringBoot日志输出到ELK](SpringBoot日志输出到ELK.md)
 
 
 
 # 参考
 
 > [ElasticSearch优化系列一：集群节点规划](https://www.jianshu.com/p/4c57a246164c)
+>
+> [elasticsearch-6.4.0 reference](https://www.elastic.co/guide/en/elasticsearch/reference/6.4/discovery-settings.html)
+>
+> [kibana-6.4.0在docker中的配置【官网】](https://www.elastic.co/guide/en/kibana/6.4/docker.html)
+>
+> [docekr-compose官网environment的配置](https://docs.docker.com/compose/environment-variables/#set-environment-variables-in-containers)
