@@ -126,38 +126,82 @@ services:
         ports: 
           - 5601:5601 
  
-  logstash: 
-    image: oio-logstash:1.0.0 
-    container_name: logstash 
-    volumes: 
-      - /data/server-apps/logstash/logstash-springboot.conf:/usr/share/logstash/pipeline/logstash.conf #挂载logstash的配置文件 
-    depends_on: 
-      - es01 #logstash在elasticsearch启动之后再启动 
-      - es02 
-      - es03 
-    ports: 
+  logstash-bus:
+    image: oio-logstash:1.0.0
+    container_name: logstash-bus
+    volumes:
+      - /data/server-apps/logstash/logstash-bus.conf:/usr/share/logstash/pipeline/logstash.conf #挂载logstash的配置文件
+    depends_on:
+      - es01 #logstash在elasticsearch启动之后再启动
+      - es02
+      - es03
+    ports:
       - 4560:4560
+      - 4561:4561
+      - 4565:4565
 ```
 
 
 
 ## logstash配置文件
 
-logstash-springboot.conf
+logstash-bus.conf
 
 ```json
 input {
+
   tcp {
     mode => "server"
     host => "0.0.0.0"
     port => 4560
     codec => json_lines
+    type => "customer-test"
+  }
+  tcp {
+    mode => "server"
+    host => "0.0.0.0"
+    port => 4561
+    codec => json_lines
+    type => "receiver-test"
+  }
+  # 存储开发环境的所有的日志
+  tcp {
+    mode => "server"
+    host => "0.0.0.0"
+    port => 4565
+    codec => json_lines
+    type => "dev"
+  }
+
+}
+
+filter{
+  #if [type] == "customer-test" {
+  #  mutate {
+  #    remove_field => "port"
+  #    remove_field => "host"
+  #    remove_field => "@version"
+  #  }
+  #  json {
+  #    source => "message"
+  #    remove_field => ["message"]
+  #  }
+  #}
+  # 把message保存至source方便搜索 
+  
+  json {
+        source => "message"
+        remove_field => ["message"]
   }
 }
+
 output {
   elasticsearch {
     hosts => ["es01:9200", "es02:9200", "es03:9200"]
-    index => "springboot-logstash-%{+YYYY.MM.dd}"
+    action => "index"
+    codec => json
+    index => "logstash-bus-%{type}-%{+YYYY.MM.dd}"
+    template_name => "logstash-bus"
   }
 }
 ```
@@ -165,6 +209,28 @@ output {
 > input 是配置对外信息
 >
 > output 的 hosts 配置的是各个es的服务器。
+
+上面logstash是以模块来区分的，同样也可以以日志级别来区分。
+
+
+
+## Logback配置
+
+```xml
+    <!--输出到logstash的appender-->
+    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <!--可以访问的logstash日志收集端口-->
+        <destination>${logLogstash}</destination>
+        <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder">
+            <!-- 自定义字段 -->
+            <customFields>{"project": "hwh-bus", "service_name": "${APP_NAME}"}</customFields>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="LOGSTASH"/>
+    </root>
+```
 
 
 
@@ -201,12 +267,14 @@ docker-compose -f docker-compose.yml up -d
 
 # kibana 配置
 
-参考[SpringBoot日志输出到ELK](SpringBoot日志输出到ELK.md)
+参考另一篇 [SpringBoot日志输出到ELK](SpringBoot日志输出到ELK.md)
 
 
 
 # 参考
 
+> [你居然还去服务器上捞日志，搭个日志收集系统难道不香么！](http://www.macrozheng.com/#/reference/mall_elk_advance)
+>
 > [ElasticSearch优化系列一：集群节点规划](https://www.jianshu.com/p/4c57a246164c)
 >
 > [elasticsearch-6.4.0 reference](https://www.elastic.co/guide/en/elasticsearch/reference/6.4/discovery-settings.html)
@@ -214,3 +282,5 @@ docker-compose -f docker-compose.yml up -d
 > [kibana-6.4.0在docker中的配置【官网】](https://www.elastic.co/guide/en/kibana/6.4/docker.html)
 >
 > [docekr-compose官网environment的配置](https://docs.docker.com/compose/environment-variables/#set-environment-variables-in-containers)
+>
+> [logstash-logback-encoder](https://github.com/logstash/logstash-logback-encoder#context-fields)
