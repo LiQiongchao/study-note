@@ -68,67 +68,85 @@ services:
 ## docker-compose.yml
 
 ```yaml
-version: '3' 
- 
-services: 
-  es01: 
-        image: oio-es:1.0.0 
-        container_name: es01 
-        environment: 
-          - "cluster.name=oio-elasticsearch" #设置集群名称为elasticsearch 
-          - "node.master=true" 
-          - "node.data=false" 
-          - "discovery.zen.ping.unicast.hosts=es02, es03" 
-          - "ES_JAVA_OPTS=-Xms512m -Xmx512m" #设置使用jvm内存大小 
-        volumes: 
-          - /data/server-apps/oio-elasticsearch/data01:/usr/share/elasticsearch/data #数据文件挂载 
-        ports: 
-          - 9201:9200 
-          - 9301:9300 
-  es02: 
-        image: oio-es:1.0.0 
-        container_name: es02 
-        environment: 
-          - "cluster.name=oio-elasticsearch" #设置集群名称为elasticsearch 
-          - "discovery.zen.ping.unicast.hosts=es01, es03" 
-          - "ES_JAVA_OPTS=-Xms512m -Xmx512m" #设置使用jvm内存大小 
-        volumes: 
-          - /data/server-apps/oio-elasticsearch/data02:/usr/share/elasticsearch/data #数据文件挂载 
-        ports: 
-          - 9202:9200 
-          - 9302:9300 
-  es03: 
-        image: oio-es:1.0.0 
-        container_name: es03 
-        environment: 
-          - "cluster.name=oio-elasticsearch" #设置集群名称为elasticsearch 
-          - "discovery.zen.ping.unicast.hosts=es01, es02" 
-          - "ES_JAVA_OPTS=-Xms512m -Xmx512m" #设置使用jvm内存大小 
-        volumes: 
-          - /data/server-apps/oio-elasticsearch/data03:/usr/share/elasticsearch/data #数据文件挂载 
-        ports: 
-          - 9203:9200 
-          - 9303:9300 
-           
-  kibana: 
-        image: kibana:6.4.0 
-        container_name: kibana 
-        # links: 
-          # - es01:es #可以用es这个域名访问elasticsearch服务 
-        depends_on: 
-          - es01 #kibana在elasticsearch启动之后再启动 
-          - es02 
-          - es03 
-        #environment:
-	  	  #- "elasticsearch.url=http://es:9201" #设置访问elasticsearch的地址，这种方式无法覆盖容器内的配置，在本版本中只能使用覆盖配置文件的方式
-        volumes: 
-          - /data/server-apps/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:rw 
-        ports: 
-          - 5601:5601 
- 
+version: '3'
+
+services:
+  es01:
+	image: oio-es:1.0.0
+	container_name: es01
+	logging:
+	  options:
+		max-size: "3g" # 设置日志文件大小最大为3G
+		max-file: "5"  # 设置日志文件个数最大为5个
+	environment:
+	  - "cluster.name=oio-elasticsearch" #设置集群名称为elasticsearch
+	  - "node.master=true"
+	  - "node.data=false"
+	  - "discovery.zen.ping.unicast.hosts=es02, es03"
+	  - "ES_JAVA_OPTS=-Xms512m -Xmx512m" #设置使用jvm内存大小
+	volumes:
+	  - /data/server-apps/oio-elasticsearch/data01:/usr/share/elasticsearch/data #数据文件挂载
+	ports:
+	  - 9201:9200
+	  - 9301:9300
+  es02:
+	image: oio-es:1.0.0
+	container_name: es02
+	logging:
+	  options:
+		max-size: "3g"
+		max-file: "5"
+	environment:
+	  - "cluster.name=oio-elasticsearch" #设置集群名称为elasticsearch
+	  - "discovery.zen.ping.unicast.hosts=es01, es03"
+	  - "ES_JAVA_OPTS=-Xms512m -Xmx512m" #设置使用jvm内存大小
+	volumes:
+	  - /data/server-apps/oio-elasticsearch/data02:/usr/share/elasticsearch/data #数据文件挂载
+	ports:
+	  - 9202:9200
+	  - 9302:9300
+  es03:
+	image: oio-es:1.0.0
+	container_name: es03
+	logging:
+	  options:
+		max-size: "3g"
+		max-file: "5"
+	environment:
+	  - "cluster.name=oio-elasticsearch" #设置集群名称为elasticsearch
+	  - "discovery.zen.ping.unicast.hosts=es01, es02"
+	  - "ES_JAVA_OPTS=-Xms512m -Xmx512m" #设置使用jvm内存大小
+	volumes:
+	  - /data/server-apps/oio-elasticsearch/data03:/usr/share/elasticsearch/data #数据文件挂载
+	ports:
+	  - 9203:9200
+	  - 9303:9300
+          
+  kibana:
+	image: kibana:6.4.0
+	container_name: kibana
+	logging:
+	  options:
+		max-size: "3g"
+		max-file: "5"
+	# links:
+	  # - es01:es #可以用es这个域名访问elasticsearch服务
+	depends_on:
+	  - es01 #kibana在elasticsearch启动之后再启动
+	  - es02
+	  - es03
+	volumes:
+	  - /data/server-apps/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:rw
+	ports:
+	  - 5601:5601
+
   logstash-bus:
     image: oio-logstash:1.0.0
     container_name: logstash-bus
+    logging:
+      options:
+        max-size: "3g"
+        max-file: "5"
     volumes:
       - /data/server-apps/logstash/logstash-bus.conf:/usr/share/logstash/pipeline/logstash.conf #挂载logstash的配置文件
     depends_on:
@@ -138,6 +156,8 @@ services:
     ports:
       - 4560:4560
       - 4561:4561
+      - 4562:4562
+      - 4563:4563
       - 4565:4565
 ```
 
