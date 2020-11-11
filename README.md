@@ -27,3 +27,11 @@
 ### :high_brightness:代码管理工具
 
 - [Gitlab搭建与使用](./note/server/Gitlab搭建与使用.md)
+
+
+
+## :beers:数据库
+
+### :tea:redis
+
+* [使用docker搭建redis主从（哨兵模式sentinel）.md](./note/DB/使用docker搭建redis主从（哨兵模式sentinel）.md)
