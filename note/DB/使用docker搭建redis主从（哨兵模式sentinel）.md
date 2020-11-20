@@ -241,7 +241,7 @@ sentinel current-epoch 0
 登录sentinel
 
 ```shell
-docker run --rm -it --network container:redsi-sentinel-01 redis:3.2.6-alpine/redis-cli -p 17801
+docker run --rm -it --network container:redis-sentinel-01 redis:3.2.6-alpine redis-cli -p 17801
 ```
 
 查看master
@@ -290,9 +290,30 @@ docker run --rm -it --network container:redsi-sentinel-01 redis:3.2.6-alpine/red
    40) "1"
 ```
 
+sentinel 常用命令
+
+```shell
+# 查看某个监控的某个集群的master
+sentinel master master01
+sentinel masters
+# 查看某个监控的某个集群的salves，需要版本大于5.0
+sentinel replicas master01
+# 查看Setntinel的其它节点
+sentinel sentinels master01
+```
+
+
+
 ### 验证高可用
 
 模拟宕机，关闭 redis-master 的容器。
+
+```shell
+# 停止容器
+docker stop redis-master
+# 连接 redis-master
+docker run --rm -it --network container:redis-master redis:3.2.6-alpine redis-cli -p 17701
+```
 
 过了30s后，会判断 redis-master宕机，再次执行 `sentinel masters` 查看选出redis-slave-02为新的master
 
