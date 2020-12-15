@@ -66,6 +66,8 @@ services:
   logstash:
     image: logstash:6.4.0
     container_name: logstash
+    environment:
+      - "xpack.monitoring.enabled=false" # 关闭 x-pack 的监控
     volumes:
       - /data/server-apps/logstash/logstash-springboot.conf:/usr/share/logstash/pipeline/logstash.conf #挂载logstash的配置文件
     depends_on:

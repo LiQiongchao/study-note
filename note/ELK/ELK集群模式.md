@@ -153,6 +153,8 @@ services:
       - es01 #logstash在elasticsearch启动之后再启动
       - es02
       - es03
+    environment:
+      - "xpack.monitoring.enabled=false" # 关闭 x-pack 的监控
     ports:
       - 4560:4560
       - 4561:4561
