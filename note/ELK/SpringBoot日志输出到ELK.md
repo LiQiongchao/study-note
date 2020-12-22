@@ -315,6 +315,12 @@ firewall-cmd --reload
 
 
 
+## Kibana安全
+
+参考: [使用Nginx配置认证访问Kibana](https://github.com/LiQiongchao/tech-note/blob/master/note/ELK/%E4%BD%BF%E7%94%A8Nginx%E9%85%8D%E7%BD%AE%E8%AE%A4%E8%AF%81%E8%AE%BF%E9%97%AEKibana.md)
+
+
+
 ## 参考
 
 > [使用Docker Compose部署SpringBoot应用](https://mp.weixin.qq.com/s?__biz=MzU1Nzg4NjgyMw==&mid=2247483800&idx=1&sn=b9e0b6c006bad05e4055a3c0bb61c815&scene=21#wechat_redirect)

@@ -293,6 +293,12 @@ docker-compose -f docker-compose.yml up -d
 
 
 
+# Kibana安全
+
+参考: [使用Nginx配置认证访问Kibana](https://github.com/LiQiongchao/tech-note/blob/master/note/ELK/%E4%BD%BF%E7%94%A8Nginx%E9%85%8D%E7%BD%AE%E8%AE%A4%E8%AF%81%E8%AE%BF%E9%97%AEKibana.md)
+
+
+
 # 参考
 
 > [你居然还去服务器上捞日志，搭个日志收集系统难道不香么！](http://www.macrozheng.com/#/reference/mall_elk_advance)
