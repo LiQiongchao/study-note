@@ -278,7 +278,15 @@ firewall-cmd --reload
     <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <!--可以访问的logstash日志收集端口-->
         <destination>127.0.0.1:4560</destination>
-        <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder"/>
+        <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder">
+            <!--定义MDC中的字段名，会自动填充MDC中的值
+				see more: https://github.com/logstash/logstash-logback-encoder#mdc-fields
+			-->
+            <includeMdcKeyName>appkey</includeMdcKeyName>
+            <includeMdcKeyName>traceId</includeMdcKeyName>
+            <!-- 自定义字段 -->
+            <customFields>{"project": "hwh-bus", "service_name": "${APP_NAME}"}</customFields>
+        </encoder>
     </appender>
 
     <!--
