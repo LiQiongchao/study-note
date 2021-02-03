@@ -18,7 +18,7 @@
 
 ## 内存及垃圾回收篇
 
-- [01- JVM与Java体系结构](./note\jvm\01- JVM与Java体系结构.md)
+- [01- JVM与Java体系结构](./note/jvm/01-JVM与Java体系结构.md)
 
 - [02- 类加载子系统](./note\jvm\02- 类加载子系统.md)
 
@@ -42,7 +42,7 @@
 
 # :leaves:Spring Security
 
-* [SpringSecurity + JWT 实现权限认证](./note\spring\SpringSecurity + JWT 实现权限认证.md)
+* [SpringSecurity + JWT 实现权限认证](./note\spring\SpringSecurity+JWT实现权限认证.md)
 
 
 
