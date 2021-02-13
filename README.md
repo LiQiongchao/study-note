@@ -47,7 +47,9 @@
 
 - [10- 对象的实例化、内存布局与访问定位](./note\jvm\10-对象的实例化、内存布局与访问定位.md)
 
-- [11-直接内存](./note\jvm\11-直接内存.md)
+- [12-执行引擎](./note\jvm\12-执行引擎.md)
+
+- [13-StringTable](./note\jvm\13-StringTable.md)
 
   
 
