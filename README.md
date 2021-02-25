@@ -4,6 +4,9 @@
   * [:book: JUC知识总结](#-book--juc----)
 - [:books:JVM](#-books-jvm)
   * [内存及垃圾回收篇](#--------)
+  * [字节码与类的加载篇](#字节码与类的加载篇)
+  * [性能监控与调优](#性能监控与调优)
+  * [大厂面试篇](#大厂面试篇)
 - [:leaves:Spring Security](#-leaves-spring-security)
 - [:ledger: ELK](#-ledger--elk)
 - [:hammer:集成工具](#-hammer-----)
@@ -43,6 +46,24 @@
 - [15-垃圾回收相关算法](./note\jvm\15-垃圾回收相关算法.md)
 - [16-垃圾回收相关概念](./note\jvm\16-垃圾回收相关概念.md)
 - [17-垃圾回收器](./note\jvm\17-垃圾回收器.md)
+
+## 字节码与类的加载篇
+
+- [18-Class字节码文件结构](./note\jvm\18-Class字节码文件结构.md)
+
+- [19-JVM指令手册](./note\jvm\19-JVM指令手册.md)
+
+
+
+## 性能监控与调优
+
+
+
+
+
+## 大厂面试篇
+
+
 
 
 
