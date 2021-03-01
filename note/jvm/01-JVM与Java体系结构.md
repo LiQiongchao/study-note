@@ -86,7 +86,7 @@ public class StackTest {
 
 
 
-使用 `java -c StackTest.class` 反编译
+使用 `javap -c StackTest.class` 反编译
 
 ```c
 Compiled from "StackTest.java"
