@@ -22,7 +22,7 @@
 
 ## :book: JUC知识总结
 
-* [HashMap分析](./note\java\juc\hashmap/hashMap.md)
+* [HashMap分析](./note/java/juc/hashmap/hashMap.md)
 
 
 
@@ -31,27 +31,27 @@
 ## 内存及垃圾回收篇
 
 - [01- JVM与Java体系结构](./note/jvm/01-JVM与Java体系结构.md)
-- [02- 类加载子系统](./note\jvm\02-类加载子系统.md)
-- [03- 运行时数据区概述及线程](./note\jvm\03-运行时数据区概述及线程.md)
-- [04- 程序计数器（PC寄存器）](./note\jvm\04-程序计数器（PC寄存器）.md)
-- [05- 虚拟机栈](./note\jvm\05-虚拟机栈.md)
-- [06- 本地方法接口](./note\jvm\06-本地方法接口.md)
-- [07- 本地方法栈](./note\jvm\07-本地方法栈.md)
-- [08- 堆](./note\jvm\08-堆.md)
-- [09- 方法区](./note\jvm\09-方法区.md)
-- [10- 对象的实例化、内存布局与访问定位](./note\jvm\10-对象的实例化、内存布局与访问定位.md)
-- [12-执行引擎](./note\jvm\12-执行引擎.md)
-- [13-StringTable](./note\jvm\13-StringTable.md)
-- [14-垃圾回收概述](./note\jvm\14-垃圾回收概述.md)
-- [15-垃圾回收相关算法](./note\jvm\15-垃圾回收相关算法.md)
-- [16-垃圾回收相关概念](./note\jvm\16-垃圾回收相关概念.md)
-- [17-垃圾回收器](./note\jvm\17-垃圾回收器.md)
+- [02- 类加载子系统](./note/jvm/02-类加载子系统.md)
+- [03- 运行时数据区概述及线程](./note/jvm/03-运行时数据区概述及线程.md)
+- [04- 程序计数器（PC寄存器）](./note/jvm/04-程序计数器（PC寄存器）.md)
+- [05- 虚拟机栈](./note/jvm/05-虚拟机栈.md)
+- [06- 本地方法接口](./note/jvm/06-本地方法接口.md)
+- [07- 本地方法栈](./note/jvm/07-本地方法栈.md)
+- [08- 堆](./note/jvm/08-堆.md)
+- [09- 方法区](./note/jvm/09-方法区.md)
+- [10- 对象的实例化、内存布局与访问定位](./note/jvm/10-对象的实例化、内存布局与访问定位.md)
+- [12-执行引擎](./note/jvm/12-执行引擎.md)
+- [13-StringTable](./note/jvm/13-StringTable.md)
+- [14-垃圾回收概述](./note/jvm/14-垃圾回收概述.md)
+- [15-垃圾回收相关算法](./note/jvm/15-垃圾回收相关算法.md)
+- [16-垃圾回收相关概念](./note/jvm/16-垃圾回收相关概念.md)
+- [17-垃圾回收器](./note/jvm/17-垃圾回收器.md)
 
 ## 字节码与类的加载篇
 
-- [18-Class字节码文件结构](./note\jvm\18-Class字节码文件结构.md)
+- [18-Class字节码文件结构](./note/jvm/18-Class字节码文件结构.md)
 
-- [19-JVM指令手册](./note\jvm\19-JVM指令手册.md)
+- [19-JVM指令手册](./note/jvm/19-JVM指令手册.md)
 
 
 
@@ -71,7 +71,7 @@
 
 # :leaves:Spring Security
 
-* [SpringSecurity + JWT 实现权限认证](./note\spring\SpringSecurity+JWT实现权限认证.md)
+* [SpringSecurity + JWT 实现权限认证](./note/spring/SpringSecurity+JWT实现权限认证.md)
 
 
 
