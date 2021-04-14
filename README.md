@@ -14,7 +14,8 @@
 - [:beers:数据库](#-beers----)
   * [:tea:redis](#-tea-redis)
 
-
+* [:notebook:语言学习](#-notebook语言学习)
+  * [Golang学习笔记](#Golang学习笔记)
 
 
 
@@ -100,3 +101,9 @@
 ## :tea:redis
 
 * [使用docker搭建redis主从（哨兵模式sentinel）.md](./note/DB/使用docker搭建redis主从（哨兵模式sentinel）.md)
+
+
+
+# :notebook:语言学习
+
+* [Golang学习笔记](./note/Golang/Golang学习笔记.md)
