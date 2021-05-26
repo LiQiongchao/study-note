@@ -29,6 +29,11 @@
 
 # :books:JVM
 
+## 网文参考
+
+- [HotSpot JVM内存管理](https://javadoop.com/post/jvm-memory-management)
+- [深入理解堆外内存 Metaspace](https://javadoop.com/post/metaspace)
+
 ## 内存及垃圾回收篇
 
 - [01- JVM与Java体系结构](./note/jvm/01-JVM与Java体系结构.md)
