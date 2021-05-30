@@ -54,8 +54,6 @@ Jvm字节码（包含Java字节码...）
 
 
 
-![image-20201225140602673](C:\Users\QiongchaoLi\AppData\Roaming\Typora\typora-user-images\image-20201225140602673.png)
-
 详细版
 
 ![image-20201225140642077](https://gitee.com/clancy/images/raw/master/img/image-20201225140642077.png)
