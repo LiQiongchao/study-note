@@ -66,6 +66,16 @@ firewall-cmd --list-ports
 
 ![](https://gitee.com/clancy/images/raw/master/img/Snipaste_2020-10-14_15-37-48.png)
 
+## 配置中文
+
+可以根据自己的需求选择汉化，Gitlab 自带中文翻译功能。目前使用的13.12.0版本是支持的，不过汉化率只有72%，还为实验特性。
+
+【个人中心】——【Preferences】——【Localization】
+
+![image-20210527104233978](https://gitee.com/clancy/images/raw/master/img/image-20210527104233978.png)
+
+【Save changes】后按 F5 刷新即可！
+
 ## 配置组与项目
 
 ### 配置组
@@ -84,11 +94,13 @@ firewall-cmd --list-ports
 
 ![](https://gitee.com/clancy/images/raw/master/img/20201014173220.png)
 
-## 使用 http 与 SSH 操作项目
+
+
+# 使用 http 与 SSH 操作项目
 
 Windows客户端GIT就是傻瓜式安装。
 
-### 使用 http 操作
+## 使用 http 操作
 
 ![](https://gitee.com/clancy/images/raw/master/img/Snipaste_2020-10-14_16-51-28.png)
 
@@ -114,11 +126,11 @@ git push
 
 ![](https://gitee.com/clancy/images/raw/master/img/Snipaste_2020-10-14_16-56-22.png)
 
-### 使用 SSH 操作
+## 使用 SSH 操作
 
 使用 http 操作 Gitlab 相对简单，使用 SSH 方式相对麻烦些。
 
-#### 配置 SSH 公钥
+### 配置 SSH 公钥
 
 把 `~/.ssh/id_rsa.pub` 内容复制。然后粘贴到 Gitlab 个人设置的 ssh-key中，写入 title 标题，然后添加即可。
 
@@ -126,7 +138,7 @@ git push
 
 
 
-#### ~~配置Clone的默认端口~~
+### ~~配置Clone的默认端口~~
 
 正常情况下复制 ssh 的地址是不包含端口的，如：`ssh://git@c59c7990905c:group-hello/hello-world.git`
 
@@ -152,7 +164,7 @@ docker restart gitlab
 
 启动时间较长，需要等一会再去访问，否则会报502的错误。
 
-#### 配置本地访问 SSH 的默认端口
+### 配置本地访问 SSH 的默认端口
 
 这时候如果去 clone 项目会报22端口服务器拒绝。
 
@@ -175,6 +187,55 @@ git clone git@192.168.31.120:group-hello/hello-world.git
 ```
 
 这时候使用 ssh 的方式也可以像 http 方式一样操作 Gitlab 库了。
+
+## 配置域名访问
+
+- 配置配置文件
+
+`vim /data/server-apps/gitlab/config/gitlab.rb`
+
+```properties
+## GitLab URL
+##! URL on which GitLab will be reachable.
+##! For more details on configuring external_url see:
+##! https://docs.gitlab.com/omnibus/settings/configuration.html#configuring-the-external-url-for-gitlab
+##!
+##! Note: During installation/upgrades, the value of the environment variable
+##! EXTERNAL_URL will be used to populate/replace this value.
+##! On AWS EC2 instances, we also attempt to fetch the public hostname/IP
+##! address from AWS. For more details, see:
+##! https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html
+# external_url 'GENERATED_EXTERNAL_URL'
+external_url 'http://gitlab.haowaihao.com.cn/'
+```
+
+- 配置Nginx代理
+
+```properties
+    server {
+        listen       80;
+        server_name  gitlab.haowaihao.com.cn;
+
+        #防止代码上传代码太大，无法上传
+        client_max_body_size 128M;
+        
+        #charset koi8-r;
+        #access_log  logs/host.access.log  main;
+
+        location / {
+            proxy_pass http://127.0.0.1:4080;
+            # root   html;
+            # index  index.html index.htm;
+        }
+    }
+```
+
+> 代码太大无法上传时会如下错误：
+>
+> error: RPC failed; HTTP 413 curl 22 The requested URL returned error: 413
+> fatal: the remote end hung up unexpectedly
+
+
 
 
 
