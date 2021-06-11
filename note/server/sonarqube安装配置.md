@@ -61,8 +61,114 @@ docker run --restart=always --name sonarqube --link postgresql -p 9000:9000 \
 
 
 
+# 扫描代码
+
+扫描代码主要是扫描后端Java代码和前端的vue代码。
+
+扫描之前需要在 Sonar 服务上配置好项目名和 [AuthenticationToken](https://docs.sonarqube.org/8.9/user-guide/user-token/)（用于连接服务鉴权）
+
+## Maven 扫描 Java 项目
+
+> [官网说明](https://docs.sonarqube.org/8.9/analysis/scan/sonarscanner-for-maven/)
+
+### 配置 Maven
+
+配置 Maven 的 Settings.xml 文件
+
+```xml
+<settings>
+    <pluginGroups>
+        <pluginGroup>org.sonarsource.scanner.maven</pluginGroup>
+    </pluginGroups>
+    <profiles>
+        <profile>
+            <id>sonar</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <!-- Optional URL to server. Default value is http://localhost:9000 -->
+                <sonar.host.url>
+                  http://myserver:9000
+                </sonar.host.url>
+            </properties>
+        </profile>
+     </profiles>
+</settings>
+```
+
+### 扫描项目
+
+```shell
+mvn clean verify sonar:sonar -Dsonar.projectKey=XX-web -Dsonar.login=YourAuthenticationToken
+```
+
+> 也可以使用 ` -Dsonar.host.url=http://172.21.20.88:9000` 来指定服务器地址。更多参数: [analysis-parameters](https://docs.sonarqube.org/8.9/analysis/analysis-parameters/)
+
+## Jenkins 扫描 Vue 项目
+
+配置实现在部署前端 Vue 项目时，对项目进行扫描检测。
+
+### 配置 Jenkins
+
+1. 安装插件
+
+    【系统管理】-【插件管理】
+
+    安装 [SonarQube Scanner for Jenkins](https://plugins.jenkins.io/sonar) 插件。
+
+2. 配置凭证
+
+    【系统管理】-【系统配置】-【Manage Credentials】-【Jenkins】-【全局凭证(unrestricted)】-【添加凭证】
+
+   类型选择“Secret text”；Secret 写在 Sonar 服务上配置的 Authentication token；ID为凭证ID，可以自动生成。
+
+3. 配置 SonarQube Server
+
+    【系统管理】-【系统配置】
+
+    配置 SonarQube server 。填写服务地址，选择 Server authentication token（第2步添加的）。
+
+4. 配置项目任务
+
+   进入项目任务，选择配置
+
+   - 在【构建环境】中选择 “Prepare SonarQube Scanner environment” ，选择第2步添加的凭证。
+   - 【构建】-【增加构建步骤】-【Excute SonarQube Scanner】。然后拉到最上面，最先执行。
+
+   配置 Ayalysis properties（其它项可以为空）
+
+   ```properties
+   #projectKey项目的唯一标识，不能重复
+   sonar.projectKey=jinfeng-independent-web
+   sonar.projectName=jinfeng-independent-web
+   sonar.sourceEncoding=UTF-8
+   sonar.modules=javascript-module
+   
+   # JavaScript module
+   javascript-module.sonar.projectName=JavaScript Module
+   javascript-module.sonar.language=js
+   javascript-module.sonar.sources=. 
+   javascript-module.sonar.projectBaseDir=src
+   ```
+
+### 注：Java 项目扫描
+
+ 	配置 Java 项目扫描与 Vue 项目就最后一步不一样。
+
+ 	进入 Java 项目任务，选择配置
+
+- 在【构建环境】中选择 “Prepare SonarQube Scanner environment” ，选择第2步添加的凭证。
+
+- 【构建】-【增加构建步骤】-【调用顶层 Maven 目标】。然后把模块拉到最上面，最先执行。
+
+  Maven 指令填写 `$SONAR_MAVEN_GOAL`
+
+
+
 # 参考
 
 - [https://www.jianshu.com/p/3e34e24e3144](https://www.jianshu.com/p/3e34e24e3144)
-
 - [https://docs.sonarqube.org/latest/setup/install-server/](https://docs.sonarqube.org/latest/setup/install-server/)
+- [sonar扫描代码配置](https://docs.sonarqube.org/8.9/analysis/overview/)
+- [Jenkins 配置使用 Sonar 扫描 Vue项目](https://www.chinacion.cn/article/1320.html)
