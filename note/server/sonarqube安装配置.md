@@ -143,19 +143,17 @@ mvn clean verify sonar:sonar -Dsonar.projectKey=XX-web -Dsonar.login=YourAuthent
    sonar.projectKey=jinfeng-independent-web
    sonar.projectName=jinfeng-independent-web
    sonar.sourceEncoding=UTF-8
-   sonar.modules=javascript-module
-   
-   # JavaScript module
-   javascript-module.sonar.projectName=JavaScript Module
-   javascript-module.sonar.language=js
-   javascript-module.sonar.sources=. 
-   javascript-module.sonar.projectBaseDir=src
+   sonar.sources=src/
+   # 排除不扫描的目录
+   sonar.exclusions=node_modules/**, dist/**
    ```
+
+> 上面是单模块的配置方式，多模块的参考 [使用Jenkins持续集成Vue项目配置Sonar任务](https://www.chinacion.cn/article/1320.html) 和 [Analysis Parameters-sonar.projectBaseDir](https://docs.sonarqube.org/latest/analysis/analysis-parameters/)
 
 ### 注：Java 项目扫描
 
  	配置 Java 项目扫描与 Vue 项目就最后一步不一样。
-
+ 	
  	进入 Java 项目任务，选择配置
 
 - 在【构建环境】中选择 “Prepare SonarQube Scanner environment” ，选择第2步添加的凭证。
