@@ -129,28 +129,51 @@ mvn clean verify sonar:sonar -Dsonar.projectKey=XX-web -Dsonar.login=YourAuthent
 
     配置 SonarQube server 。填写服务地址，选择 Server authentication token（第2步添加的）。
 
-4. 配置项目任务
+### 配置项目任务
 
-   进入项目任务，选择配置
+进入项目任务，选择配置
 
-   - 在【构建环境】中选择 “Prepare SonarQube Scanner environment” ，选择第2步添加的凭证。
-   - 【构建】-【增加构建步骤】-【Excute SonarQube Scanner】。然后拉到最上面，最先执行。
+在【构建环境】中选择 “Prepare SonarQube Scanner environment” ，选择第2步添加的凭证。
 
-   配置 Ayalysis properties（其它项可以为空）
+![image-20210617230304028](https://gitee.com/clancy/images/raw/master/img/20210617230312.png)
 
-   ```properties
-   #projectKey项目的唯一标识，不能重复
-   sonar.projectKey=jinfeng-independent-web
-   sonar.projectName=jinfeng-independent-web
-   sonar.sourceEncoding=UTF-8
-   sonar.sources=src/
-   # 排除不扫描的目录
-   sonar.exclusions=node_modules/**, dist/**
-   ```
+【构建】-【增加构建步骤】。然后拉到最上面，最先执行。
 
+【Excute SonarQube Scanner】
+
+![image-20210617230440213](https://gitee.com/clancy/images/raw/master/img/20210617230442.png)
+
+配置 Ayalysis properties（其它项可以为空）
+
+```properties
+#projectKey项目的唯一标识，不能重复
+sonar.projectKey=sanbao-web
+sonar.projectName=sanbao-web
+sonar.sourceEncoding=UTF-8
+sonar.sources=src/
+# 排除不扫描的目录
+sonar.exclusions=node_modules/**, dist/**
+```
+
+> 为了避免扫描`node_modules` 和 `dist` 不需要分析的文件夹，所以在snoar扫描之前要把这两个文件删除了，或者单独建立一个扫描的工程。
+>
 > 上面是单模块的配置方式，多模块的参考 [使用Jenkins持续集成Vue项目配置Sonar任务](https://www.chinacion.cn/article/1320.html) 和 [Analysis Parameters-sonar.projectBaseDir](https://docs.sonarqube.org/latest/analysis/analysis-parameters/)
 
-### 注：Java 项目扫描
+
+
+【执行shell】编译项目
+
+![image-20210617230529096](https://gitee.com/clancy/images/raw/master/img/20210617230531.png)
+
+【send files or execute commands over SSH】把编译后的dist上传到服务器
+
+![image-20210617230841765](https://gitee.com/clancy/images/raw/master/img/20210617230843.png)
+
+【执行shell】删除 `node_modules` 目录，不然 sonar 会扫描该目录，会导致 jenkins OOM
+
+![image-20210617230955881](https://gitee.com/clancy/images/raw/master/img/20210617230957.png)
+
+## Jenkins 扫描 Java 项目
 
  	配置 Java 项目扫描与 Vue 项目就最后一步不一样。
  	
@@ -161,6 +184,10 @@ mvn clean verify sonar:sonar -Dsonar.projectKey=XX-web -Dsonar.login=YourAuthent
 - 【构建】-【增加构建步骤】-【调用顶层 Maven 目标】。然后把模块拉到最上面，最先执行。
 
   Maven 指令填写 `$SONAR_MAVEN_GOAL`
+
+要先在【全局工具配置】中配置 maven 在服务器中 maven 安装目录，然后在【调用顶层 Maven 目标】时选择上一步添加的 maven ，不然会报找不到 `mvn` 指令。后面打包，上传jar文件，可以继续添加其它的构建工具。
+
+![image-20210617231233689](https://gitee.com/clancy/images/raw/master/img/20210617231235.png)
 
 
 
